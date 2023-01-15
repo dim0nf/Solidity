@@ -33,8 +33,8 @@ contract Donation {
         _adr.transfer(address(this).balance);
     }
 
-        // следующие две функции написаны, для удобства отладки в Hardhat
-        // но они использовались и в hardhat test
+    // следующие две функции написаны, для удобства отладки в Hardhat
+    // но они использовались и в hardhat test
     function getBalance () external view returns(uint) {
         return address(this).balance;
     }
