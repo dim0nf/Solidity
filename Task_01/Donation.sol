@@ -5,12 +5,14 @@ pragma solidity ^0.8.0;
 
 contract Donation {
 
-    address owner;
+    address immutable owner;
+    address payable immutable _addr;
     mapping (address => uint) public payments;
     address[] public users;
 
     constructor () {
         owner = msg.sender;
+        _addr = payable(0x70997970C51812dc3A010C7d01b50e0d17dc79C8);
     }
 
     modifier onlyOwner() {
@@ -28,7 +30,6 @@ contract Donation {
     }
 
     function withdraw () external onlyOwner {
-        address payable _adr = payable(0x70997970C51812dc3A010C7d01b50e0d17dc79C8);
         _adr.transfer(address(this).balance);
     }
 
