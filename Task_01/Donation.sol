@@ -20,7 +20,6 @@ contract Donation {
 
     function acceptanceDonation () external payable {
         if (payments[msg.sender] > 0) {
-            return;
            }
         else {
             users.push(msg.sender);
