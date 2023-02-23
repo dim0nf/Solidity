@@ -1,125 +1,110 @@
-const { expect } = require("chai")
-const { ethers } = require("hardhat")
+const { expect } = require('chai');
+const { ethers } = require('hardhat');
 
 describe ("Donation", function () {
-  let acc1
-  let acc2
-  let acc3    
-  let acc4
-  let acc5
-  let donation
-
-  beforeEach(async function() {
-    [acc1, acc2, acc3, acc4, acc5] = await ethers.getSigners()
-    const Donation = await ethers.getContractFactory("Donation", acc1)
-    donation = await Donation.deploy()
-    await donation.deployed()
+  let owner, acc1, acc2, acc3, donate
+  before(async function() {
+    [owner, acc1, acc2, acc3] = await ethers.getSigners()
+    const Donate = await ethers.getContractFactory("Donation", owner)
+    donate = await Donate.deploy()
+    await donate.deployed()
   })
 
-  it("should be deployed", async function() {
-    expect(donation.address).to.be.properAddress
-    console.log(donation.address.toString())
+  describe('Should be deployed/should have 0 ether by default', () => {
+    it("Should be deployed", async function() {
+      expect(donate.address).to.be.properAddress
+      console.log('Contract address :', donate.address)
+    })
+    it("Should have 0 ether by default", async function() {
+      const balance = await ethers.provider.getBalance(donate.address)
+        expect(balance).to.equal(0)
+      console.log('Contract balance : ',balance)
+    })
   })
-
-  it("should have 0 ether by default", async function() {
-    const balance = await donation.getBalance()
-    expect(balance).to.eq(0)
-    // console.log(balance.toString())
+  async function receive(user, amount){
+    const user_balance = ethers.BigNumber.from(await donate.payments(user.address))
+    const tx = await donate.connect(user).acceptDonation({ value: amount})
+    expect(() => tx)
+      .to.changeEtherBalance([user, donate], [-amount, amount])
+    expect(await donate.payments(user.address))
+      .to.equal(user_balance.add(amount))
+    await expect(tx)
+      .to.emit(donate, 'Donation')
+      .withArgs(user.address, amount)
+  }
+  describe ('Test reception of funds', () => {
+    const summ = ethers.utils.parseEther("5.0")
+    it("It should not be possible to get 0 funds", async function() {
+      await expect(donate.connect(acc1).acceptDonation({ value: ethers.utils.parseEther("0") }))
+        .to.be.revertedWith("zero value");
+    })
+    it("Reception of funds from the user1", async function() {
+      await receive(acc1, summ)
+    })
+    it("Reception of funds from the user2", async function() {
+      await receive(acc2, summ)
+    })
+    it("Reception of funds from the user1 again", async function() {
+      await receive(acc1, summ)
+    })
+    it("Reception of funds from the user2 again", async function() {
+      await receive(acc2, summ)
+    })
   })
-
-  it("should have 0 by address array default", async function() {
-    const length = await donation.getLength()
-    expect(length).to.eq(0)
-    // console.log(length.toString())
+  async function withdraw(user, amount){
+    let _user = user, _amount = amount;
+    if (amount == ethers.constants.Zero) _amount = await ethers.provider.getBalance(donate.address);
+    if (user == ethers.constants.AddressZero) _user = owner.address;
+    const tx = await donate.connect(owner).withdraw(user, amount);
+    expect(() => tx)
+      .to.changeEtherBalance([_user, donate], [_amount, -_amount])
+    await expect (tx)
+      .to.emit(donate, 'Withdrawall')
+      .withArgs(_user, _amount)
+    }
+    describe ('Test withdraw owner', () => {
+    const summ = ethers.utils.parseEther("2.0")
+    it("Withdraw not owner", async function(){
+      await expect(donate.connect(acc1).withdraw(acc3.address, summ))
+        .to.be.revertedWith("you are not an owner!")
+    })
+    it("Withdraw funds to user1", async function() {
+      await withdraw(acc1.address, summ)
+    })
+    it("Withdraw funds to user2", async function() {
+      await withdraw(acc2.address, summ)
+    })
+    it("Withdraw funds to AddressZero address", async function() {
+      await withdraw(ethers.constants.AddressZero, summ)
+    })
+    it("Withdraw 0 funds to user1", async function() {
+      await donate.connect(acc1).acceptDonation({ value: summ})
+      await withdraw(acc1.address, ethers.constants.Zero)
+    })
+    it("Withdraw 0 funds to AddressZero address", async function() {
+      await donate.connect(acc1).acceptDonation({ value: summ})
+      await withdraw(ethers.constants.AddressZero, ethers.constants.Zero)
+    })
   })
- 
-  it("should be possible to send funds", async function() {
-    const sum = 100
-    const tx1 = await donation.connect(acc3).acceptanceDonation({ value: sum })
-
-    await expect(() => tx1)
-      .to.changeEtherBalances([acc3, donation], [-sum, sum]);
-    
-    const length1 = await donation.getLength()
-    expect(length1).to.eq(1)
-
-    // await tx1.wait()
-    // console.log(length1.toString())
-
-    const tx2 = await donation.connect(acc4).acceptanceDonation({ value: sum })
-
-    await expect(() => tx2)
-      .to.changeEtherBalances([acc4, donation], [-sum, sum]);
-
-    const length2 = await donation.getLength()
-    expect(length2).to.eq(2)
-
-    // await tx2.wait()
-    // console.log(length2.toString())
-  
-    const tx3 = await donation.connect(acc5).acceptanceDonation({ value: sum })
-
-    await expect(() => tx3)
-      .to.changeEtherBalances([acc5, donation], [-sum, sum]);
-  
-    const length3 = await donation.getLength()
-    expect(length3).to.eq(3)
-
-    // await tx3.wait()
-    // console.log(length3.toString())
-
-    const tx4 = await donation.connect(acc3).acceptanceDonation({ value: sum })
-
-    await expect(() => tx4)
-      .to.changeEtherBalances([acc3, donation], [-sum, sum]);
-    
-    const length4 = await donation.getLength()
-    expect(length4).to.eq(3)
-
-    // await tx4.wait()
-    // console.log(length4.toString())
-
-    const tx5 = await donation.connect(acc4).acceptanceDonation({ value: sum })
-
-    await expect(() => tx5)
-      .to.changeEtherBalances([acc4, donation], [-sum, sum]);
-    
-    const length5 = await donation.getLength()
-    expect(length5).to.eq(3)
-
-    // await tx5.wait()
-    // console.log(length5.toString())
-
-    const tx6 = await donation.connect(acc5).acceptanceDonation({ value: sum })
-
-    await expect(() => tx6)
-      .to.changeEtherBalances([acc5, donation], [-sum, sum]);
-    
-    const length6 = await donation.getLength()
-    expect(length6).to.eq(3)
-
-    // await tx6.wait()
-    // console.log(length6.toString())
-
+  async function members(user, amount){
+    const user_balance = ethers.BigNumber.from(await donate.payments(user.address));
+    await donate.connect(owner).acceptDonation({value: user_balance})
+    const tx = await donate.connect(user).withdrawMembers(amount);
+    expect(() => tx)
+      .to.changeEtherBalance([user, donate],[amount, -amount])
+    expect(await donate.payments(user.address))
+      .to.equal(user_balance.sub(amount))
+    await expect (tx)
+      .to.emit(donate, 'WithdrawMembers')
+      .withArgs(user.address, amount)
+  }
+  describe ('Withdraw user', () => {
+    const amount = ethers.utils.parseEther("2.0");
+    it("Withdraw user1", async function(){
+      await members(acc1, amount);
+    })
+    it("Withdraw user2", async function(){
+      await members(acc2, amount);
+    })
   })
-
-  it("withdrawal of funds by the owner", async function() {
-    const sum = 500
-    await donation.connect(acc3).acceptanceDonation({ value: sum })
-    const tx = await donation.connect(acc1).withdraw({ })
-
-    await expect(() => tx)
-      .to.changeEtherBalances([acc2, donation], [sum, -sum]);
-
-    await tx.wait()
-
-  })
-
-  it("shound not allow other accounts to withdraw funds", async function() {
-    await expect(
-      donation.connect(acc3).withdraw({ })
-    ).to.be.revertedWith("you are not an owner!")
-
-  })
-
 })
