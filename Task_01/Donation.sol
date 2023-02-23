@@ -2,45 +2,38 @@
 // Author: @Dim0nf
 
 pragma solidity ^0.8.0;
+import { IDonation } from "./IDonation.sol";
 
-contract Donation {
+contract Donation is IDonation{
 
-    address immutable owner;
-    address payable immutable _addr;
+    address payable immutable owner;
     mapping (address => uint) public payments;
-    address[] public users;
 
     constructor () {
-        owner = msg.sender;
-        _addr = payable(0x70997970C51812dc3A010C7d01b50e0d17dc79C8);
+        owner = payable(msg.sender);
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "you are not an owner!");
-        _;
-    }
-
-    function acceptanceDonation () external payable {
-        if (payments[msg.sender] > 0) {
-           }
-        else {
-            users.push(msg.sender);
-        }
+    function acceptDonation () external payable {
+        require(msg.value != 0, "zero value" );
         payments[msg.sender] += msg.value;
+        emit Donation(msg.sender, msg.value);
     }
 
-    function withdraw () external onlyOwner {
-        _adr.transfer(address(this).balance);
+    function withdraw (address payable _addr, uint256 _amount) external {
+        require(msg.sender == owner, "you are not an owner!");
+        if (_addr == address(0)) _addr = owner;
+        if (_amount == 0 ) _amount = address(this).balance;
+        (bool success,) = _addr.call{value: _amount}(new bytes(0));
+        require(success, "failed to withdraw");
+        emit Withdrawall(_addr, _amount);
     }
 
-     // следующие две функции написаны, для удобства отладки в Hardhat
-     // но они использовались и в hardhat test
-    function getBalance () external view returns(uint) {
-        return address(this).balance;
+    function withdrawMembers (uint256 _amount) external {
+        address payable _addr = payable(msg.sender);
+        if (payments[msg.sender] >= _amount)
+            payments[msg.sender] -= _amount;
+            (bool success,) = _addr.call{value: _amount}(new bytes(0));
+            require(success, "failed to withdraw");
+        emit WithdrawMembers(msg.sender, _amount);
     }
-
-    function getLength() external view returns(uint){
-        return (users.length);
-    }
-
 }
