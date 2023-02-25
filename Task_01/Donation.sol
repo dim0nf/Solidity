@@ -27,13 +27,4 @@ contract Donation is IDonation{
         require(success, "failed to withdraw");
         emit Withdrawall(_addr, _amount);
     }
-
-    function withdrawMembers (uint256 _amount) external {
-        address payable _addr = payable(msg.sender);
-        if (payments[msg.sender] >= _amount)
-            payments[msg.sender] -= _amount;
-            (bool success,) = _addr.call{value: _amount}(new bytes(0));
-            require(success, "failed to withdraw");
-        emit WithdrawMembers(msg.sender, _amount);
-    }
 }
