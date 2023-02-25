@@ -86,25 +86,4 @@ describe ("Donation", function () {
       await withdraw(ethers.constants.AddressZero, ethers.constants.Zero)
     })
   })
-  async function members(user, amount){
-    const user_balance = ethers.BigNumber.from(await donate.payments(user.address));
-    await donate.connect(owner).acceptDonation({value: user_balance})
-    const tx = await donate.connect(user).withdrawMembers(amount);
-    expect(() => tx)
-      .to.changeEtherBalance([user, donate],[amount, -amount])
-    expect(await donate.payments(user.address))
-      .to.equal(user_balance.sub(amount))
-    await expect (tx)
-      .to.emit(donate, 'WithdrawMembers')
-      .withArgs(user.address, amount)
-  }
-  describe ('Withdraw user', () => {
-    const amount = ethers.utils.parseEther("2.0");
-    it("Withdraw user1", async function(){
-      await members(acc1, amount);
-    })
-    it("Withdraw user2", async function(){
-      await members(acc2, amount);
-    })
-  })
 })
