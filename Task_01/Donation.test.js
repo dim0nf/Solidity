@@ -22,7 +22,7 @@ describe ("Donation", function () {
   })
   async function receive(user, amount){
     const user_balance = ethers.BigNumber.from(await donate.payments(user.address));
-    const tx = await donate.connect(user).acceptDonation({ value: amount});
+    const tx = await donate.connect(user).acceptDonation({value: amount});
     expect(() => tx)
       .to.changeEtherBalance([user, donate], [-amount, amount]);
     expect(await donate.payments(user.address))
@@ -34,7 +34,7 @@ describe ("Donation", function () {
   describe ('Test reception of funds', () => {
     const summ = ethers.utils.parseEther("11.0");
     it("It should not be possible to get 0 funds", async function() {
-      await expect(donate.connect(acc1).acceptDonation({ value: ethers.utils.parseEther("0") }))
+      await expect(donate.connect(acc1).acceptDonation({ value: ethers.utils.parseEther("0.0")}))
         .to.be.revertedWith("zero value");
     })
     it("Reception of funds from the user1", async function() {
@@ -51,8 +51,9 @@ describe ("Donation", function () {
     })
   })
   async function withdraw(user, amount){
-    let _user = user, _amount = amount;
-    if (amount == ethers.constants.Zero) _amount = await ethers.provider.getBalance(donate.address);
+    let _user = user;
+    let _amount = ethers.BigNumber.from(amount);
+    if (amount == ethers.constants.Zero) _amount = ethers.BigNumber.from(await ethers.provider.getBalance(donate.address));
     if (amount.gt(ethers.BigNumber.from((await ethers.provider.getBalance(donate.address)))))
       _amount = ethers.BigNumber.from((await ethers.provider.getBalance(donate.address)));
     if (user == ethers.constants.AddressZero) _user = owner.address;
@@ -79,7 +80,7 @@ describe ("Donation", function () {
       await withdraw(ethers.constants.AddressZero, summ);
     })
     it("Withdraw 0 funds to user1", async function() {
-      await receive(acc3, summ);
+      await donate.connect(owner).acceptDonation({value:summ});
       await withdraw(acc1.address, ethers.constants.Zero);
     })
     it("Withdraw 0 funds to AddressZero address", async function() {
@@ -107,20 +108,20 @@ describe ("Donation", function () {
       .withArgs(user.address, _amount);
   }
   describe ('Withdraw user', () => {
-    const amount = ethers.BigNumber.from("15000000000000000000");
+    const amount = ethers.utils.parseEther("15.0");
     it("Withdraw from user1 from 0 balance contract", async function(){
       await expect(donate.connect(acc1).withdrawMembers(amount))
         .to.be.revertedWith("contact zero balance");
     })
     it("Withdraw from user1", async function(){
-      await donate.connect(owner).acceptDonation({value: ethers.BigNumber.from("20000000000000000000")});
+      await donate.connect(owner).acceptDonation({value: ethers.utils.parseEther("20.0")});
       await members(acc1, amount);
     })
     it('Withdraw from user1 again', async function() {
       await members(acc1, amount);
     })
     it("Withdraw from user2", async function(){
-      await donate.connect(owner).acceptDonation({value: ethers.BigNumber.from("24000000000000000000")});
+      await donate.connect(owner).acceptDonation({value: ethers.utils.parseEther("24.0")});
       await members(acc2, amount);
     })
     it("Withdraw from user2 again", async function(){
