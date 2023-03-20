@@ -30,35 +30,22 @@ describe ('MultiSigWallet', function () {
     it("Checking whether users are included in the array owners", async function () {
       expect(await multisigwallet.owners(0))
         .to.equal(addr1.address);
-      // console.log(await multisigwallet.owners(0));
       expect(await multisigwallet.owners(1))
         .to.equal(addr2.address);
-      // console.log(await multisigwallet.owners(1));
       expect(await multisigwallet.owners(2))
         .to.equal(addr3.address);
-      // console.log(await multisigwallet.owners(2));
     })
     it("Checking whether users are included in the mapping isOwner", async function() {
       expect(await multisigwallet.isOwner(owner.address))
         .to.equal(false);
-      // console.log('Owner addrres', owner.address);
-      // console.log('Right to vote owner', await multisigwallet.isOwner(owner.address));
       expect(await multisigwallet.isOwner(addr1.address))
         .to.equal(true);
-      // console.log('User1 addrres', addr1.address);
-      // console.log('Right to vote user1', await multisigwallet.isOwner(addr1.address));      
       expect(await multisigwallet.isOwner(addr2.address))
         .to.equal(true);
-      // console.log('User2 addrres', addr2.address);
-      // console.log('Right to vote user2', await multisigwallet.isOwner(addr2.address));
       expect(await multisigwallet.isOwner(addr3.address))
         .to.equal(true);
-      // console.log('User3 addrres', addr3.address);
-      // console.log('Right to vote user3', await multisigwallet.isOwner(addr3.address));
       expect(await multisigwallet.isOwner(addr4.address))
         .to.equal(false);
-      // console.log('User4 addrres', addr4.address);
-      // console.log('Right to vote user4', await multisigwallet.isOwner(addr4.address));
     })
     it("List owners", async function () {
       let list_owners = await multisigwallet.getOwners();
@@ -69,15 +56,11 @@ describe ('MultiSigWallet', function () {
         .to.equal(addr2.address);
       expect(list_owners[2])
         .to.equal(addr3.address);
-      // console.log(list_owners[0]);
-      // console.log(list_owners[1]);
-      // console.log(list_owners[2]);
     })
     it("Check the number of votes", async function () {
       const tx  = await multisigwallet.numConfirmationsRequired()
       expect (tx)
         .to.equal(vote);
-      console.log('Check the number of votes', tx.toString());
     })
   })
 
@@ -96,7 +79,6 @@ describe ('MultiSigWallet', function () {
       */
     
     const _bal = await ethers.provider.getBalance(multisigwallet.address);
-    // console.log(ethers.utils.formatEther(_bal));
 
     const tx = await user.sendTransaction({
       from: user.address,
@@ -105,7 +87,6 @@ describe ('MultiSigWallet', function () {
       });
     
     const bal = await ethers.provider.getBalance(multisigwallet.address);
-    // console.log(ethers.utils.formatEther(bal));
     expect (bal)
       .to.equal(_bal.add(amount));
 
@@ -114,7 +95,6 @@ describe ('MultiSigWallet', function () {
     await expect(tx)
       .to.emit(multisigwallet, 'Deposit')
       .withArgs(user.address, amount, ethers.BigNumber.from(await ethers.provider.getBalance(multisigwallet.address)));
-    // console.log('Contact balance: ',ethers.utils.formatEther(await ethers.provider.getBalance(multisigwallet.address)));
   }
   
   describe('Replenish the balance of the contract from user', () => {
@@ -159,12 +139,6 @@ describe ('MultiSigWallet', function () {
       .to.equal(false);
     expect(v.numConfirmations)
         .to.equal(0);
-    // console.log('to: ',v.to);
-    // console.log('value: ', ethers.utils.formatEther(v.value));
-    // console.log('data bytes to string: ', ethers.utils.parseBytes32String(v.data));
-    // console.log('data bytes: ', _dataBytes);
-    // console.log('executed: ', v.executed);
-    // console.log('numConfirmations: ', v.numConfirmations.toString());
   }
 
   describe('Creating voting transactions', () => {
@@ -189,8 +163,6 @@ describe ('MultiSigWallet', function () {
   async function confirmtransaction(user, _txIndex) {
     const _v = await multisigwallet.transactions(_txIndex);
     const _w = await multisigwallet.isConfirmed(_txIndex,user.address);
-    // console.log('numConfirmations before', _v.numConfirmations.toString());
-    // console.log('vote befor: ', _w);
     const tx = await multisigwallet.connect(user).confirmTransaction(_txIndex);
     const v = await multisigwallet.transactions(_txIndex)
     expect(v.numConfirmations)
@@ -200,9 +172,6 @@ describe ('MultiSigWallet', function () {
     await expect(tx)
       .to.emit(multisigwallet, 'ConfirmTransaction')
       .withArgs(user.address, _txIndex);
-    // const w = await multisigwallet.isConfirmed(_txIndex,user.address);
-    // console.log('numConfirmations after', v.numConfirmations.toString());
-    // console.log('vote after: ', w);
   }
 
   describe('Transaction confirmation', () => {
@@ -246,9 +215,6 @@ describe ('MultiSigWallet', function () {
 
   async function revokeconfirmation(user, _txIndex) {
     const _v = await multisigwallet.transactions(_txIndex);
-    // const _w = await multisigwallet.isConfirmed(_txIndex,user.address);
-    // console.log('vote befor: ', _w);
-    // console.log('numConfirmations before', _v.numConfirmations.toString());
     const tx = await multisigwallet.connect(user).revokeConfirmation(_txIndex);
     const v = await multisigwallet.transactions(_txIndex);
     expect(v.numConfirmations)
@@ -258,10 +224,6 @@ describe ('MultiSigWallet', function () {
     await expect(tx)
       .to.emit(multisigwallet, 'RevokeConfirmation')
       .withArgs(user.address, _txIndex);
-    // const w = await multisigwallet.isConfirmed(_txIndex,user.address);
-    // console.log('vote after: ', w);
-    // console.log('numConfirmations after', v.numConfirmations.toString());
-    // console.log('********************************************************');
   }
   
   describe('The abolition of transaction confirmation', () => {
@@ -305,28 +267,16 @@ describe ('MultiSigWallet', function () {
 
   async function executetransaction(user, _txIndex) {
     const _v = await multisigwallet.transactions(_txIndex);
-    // console.log('amount: ', ethers.utils.formatEther(_v.value));
-    // console.log('to: ', _v.to)
-    // const _w = await multisigwallet.isConfirmed(_txIndex,user.address);
-    // console.log('befor: ', _w);
-
     const tx = await multisigwallet.connect(user).executeTransaction(_txIndex);
     const v = await multisigwallet.transactions(_txIndex);
 
     expect(v.executed)
       .to.equal(true);
-    // console.log(v);
-
     await expect (() => tx)
       .to.changeEtherBalance(_v.to, _v.value);
-
     await expect(tx)
       .to.emit(multisigwallet, 'ExecuteTransaction')
       .withArgs(user.address, _txIndex);
-
-    // const w = await multisigwallet.isConfirmed(_txIndex,user.address);
-    // console.log('after: ', w);
-    // console.log('numConfirmations after', v.numConfirmations);
   }
 
   describe('Perform a confirmed transaction', () => {
@@ -378,15 +328,11 @@ describe ('MultiSigWallet', function () {
         .to.equal(addr2.address);
       expect(z[2])
         .to.equal(addr3.address);
-      // console.log(z[0]);
-      // console.log(z[1]);
-      // console.log(z[2]);
     })
     it("Function getTransactionCount", async function(){
       const c = await multisigwallet.connect(owner).getTransactionCount();
       expect(c)
         .to.equal(3);
-      // console.log(c);
     })
     it("Function getTransaction", async function(){
       let txIndex = 2;
@@ -401,12 +347,6 @@ describe ('MultiSigWallet', function () {
         .to.equal(false);
       expect(t.numConfirmations)
         .to.equal(1);
-      // console.log("transaction: ", txIndex)
-      // console.log('to: ',t.to);
-      // console.log('value: ', ethers.utils.formatEther(t.value));
-      // console.log('data: ', ethers.utils.parseBytes32String(t.data));
-      // console.log('executed: ', t.executed);
-      // console.log('numConfirmations: ', t.numConfirmations.toString());
     })
   })
 
