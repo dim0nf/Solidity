@@ -1,6 +1,8 @@
 const { expect } = require('chai');
 const { ethers } = require('hardhat');
 
+//тест контроля версий :)
+
 describe ('MultiSigWallet', function () {
   let owner, addr1, addr2, addr3, addr4, multisigwallet;
   const vote = 2;
