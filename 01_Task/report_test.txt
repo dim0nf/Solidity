@@ -1,0 +1,64 @@
+
+Version
+=======
+> solidity-coverage: v0.7.22
+
+Instrumenting for coverage...
+=============================
+
+> Donation.sol
+> IDonation.sol
+
+Compilation:
+============
+
+Nothing to compile
+
+Network Info
+============
+> HardhatEVM: v2.15.0
+> network:    hardhat
+
+
+
+  Donation
+    Should be deployed/should have 0 ether by default
+Contract address : 0x5FbDB2315678afecb367f032d93F642f64180aa3
+      ✔ Should be deployed
+Contract balance:  0.0
+      ✔ Should have 0 ether by default
+    Test reception of funds
+      ✔ It should not be possible to get 0 funds (104ms)
+      ✔ Reception of funds from the user1 (137ms)
+      ✔ Reception of funds from the user2 (82ms)
+      ✔ Reception of funds from the user1 again (69ms)
+      ✔ Reception of funds from the user2 again (59ms)
+    Test withdraw owner
+      ✔ Withdraw not owner
+      ✔ Withdraw funds to user1 (51ms)
+      ✔ Withdraw funds to user2 (49ms)
+      ✔ Withdraw funds to AddressZero address (39ms)
+      ✔ Withdraw 0 funds to user1 (62ms)
+      ✔ Withdraw 0 funds to AddressZero address (66ms)
+      ✔ Withdraw funds > balance contract (59ms)
+    Withdraw user
+      ✔ Withdraw from user1 from 0 balance contract
+      ✔ Withdraw from user1 (85ms)
+      ✔ Withdraw from user1 again (61ms)
+      ✔ Withdraw from user2 (90ms)
+      ✔ Withdraw from user2 again (93ms)
+
+
+  19 passing (2s)
+
+----------------|----------|----------|----------|----------|----------------|
+File            |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+----------------|----------|----------|----------|----------|----------------|
+ contracts/     |      100 |       90 |      100 |      100 |                |
+  Donation.sol  |      100 |       90 |      100 |      100 |                |
+  IDonation.sol |      100 |      100 |      100 |      100 |                |
+----------------|----------|----------|----------|----------|----------------|
+All files       |      100 |       90 |      100 |      100 |                |
+----------------|----------|----------|----------|----------|----------------|
+
+> Istanbul reports written to ./coverage/ and ./coverage.json
