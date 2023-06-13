@@ -1,0 +1,107 @@
+
+Version
+=======
+> solidity-coverage: v0.7.22
+
+Instrumenting for coverage...
+=============================
+
+> IMultiSigWallet.sol
+> MultiSigWallet.sol
+
+Compilation:
+============
+
+Nothing to compile
+
+Network Info
+============
+> HardhatEVM: v2.15.0
+> network:    hardhat
+
+
+
+  MultiSigWallet
+    Get network, should be deployed/should have 0 ether by default
+{ chainId: 31337, name: 'unknown' }
+      ✔ Get network
+Contract address : 0x5FbDB2315678afecb367f032d93F642f64180aa3
+      ✔ Should be deployed
+Contract balance:  0.0
+      ✔ Should have 0 ether by default
+    Checking the correctness of processing require in the constructor
+      ✔ owners required (88ms)
+      ✔ invalid number of required confirmations (vote=0) (40ms)
+      ✔ invalid number of required confirmations (vote > number of owners) (44ms)
+      ✔ invalid owner(address(0)) (61ms)
+      ✔ owner not unique (74ms)
+    Checking the correctness of constructor execution
+      ✔ Checking whether users are included in the array owners (57ms)
+      ✔ Checking whether users are included in the mapping isOwner (73ms)
+      ✔ List owners
+      ✔ Check the number of votes
+    Replenish the balance of the contract from user
+      ✔ Replenish the balance of the contract from deployer without the right to vote (70ms)
+      ✔ Replenish the balance of the contract from user1 with the right to vote (65ms)
+      ✔ Replenish the balance of the contract from user2 with the right to vote (54ms)
+      ✔ Replenish the balance of the contract from user3 with the right to vote (53ms)
+      ✔ Replenish the balance of the contract from user4 without the right to vote (52ms)
+    Creating voting transactions
+      ✔ Creation of the transaction not owner (60ms)
+      ✔ Creation of the first transaction for voting by the owner (81ms)
+      ✔ Creation of the second transaction for voting by the owner (85ms)
+      ✔ Creation of the third transaction for voting by the owner (86ms)
+    Transaction confirmation
+      Confirmation of the first transaction by the owner
+        ✔ Confirmation by the first owner (111ms)
+        ✔ Confirmation by the second owner (102ms)
+        ✔ Confirmation by the third owner (321ms)
+      Confirmation of the second transaction by the owner
+        ✔ Confirmation by the first owner (169ms)
+        ✔ Confirmation by the second owner (130ms)
+        ✔ Confirmation by the third owner (143ms)
+      Confirmation of the third transaction by the owner
+        ✔ Confirmation by the first owner (305ms)
+        ✔ Confirmation by the second owner (228ms)
+        ✔ Confirmation by the third owner (132ms)
+    The abolition of transaction confirmation
+      The abolition of the first transaction by the owner
+        ✔ The abolition of the first transaction by the first owner (281ms)
+      The abolition of the second transaction by the owner
+        ✔ The abolition of the second transaction by the third owner (107ms)
+      The abolition of the third transaction by the owner
+        ✔ The abolition of of the third transaction by the first owner (117ms)
+        ✔ The abolition of of the third transaction by the third owner (121ms)
+      Checking the require branch when revoking Confirmation
+        ✔ The abolition of of the third transaction by the third owner (42ms)
+    Perform a confirmed transaction
+      ✔ Perform the first transaction (170ms)
+      ✔ Perform the second transaction (133ms)
+      ✔ transaction with insufficient votes/third transaction (50ms)
+    Checking the work of modifiers
+      ✔ modifiers *onlyOwner* not owner
+      ✔ modifier txExists/tx does not exist
+      ✔ modifier notExecuted/tx already executed (94ms)
+      ✔ modifier notConfirmed/tx already confirmed (40ms)
+    Secondary functions
+      ✔ Function getOwners
+      ✔ Function getTransactionCount
+      ✔ Function getTransaction (47ms)
+
+
+  45 passing (5s)
+
+----------------------|----------|----------|----------|----------|----------------|
+File                  |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+----------------------|----------|----------|----------|----------|----------------|
+ contracts/           |      100 |    95.45 |      100 |      100 |                |
+  IMultiSigWallet.sol |      100 |      100 |      100 |      100 |                |
+  MultiSigWallet.sol  |      100 |    95.45 |      100 |      100 |                |
+----------------------|----------|----------|----------|----------|----------------|
+All files             |      100 |    95.45 |      100 |      100 |                |
+----------------------|----------|----------|----------|----------|----------------|
+
+> Istanbul reports written to ./coverage/ and ./coverage.json
+
+Не проверяется ветвление в контракте строка кода 177
+require(success, "tx failed");

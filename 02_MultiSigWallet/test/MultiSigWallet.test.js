@@ -1,8 +1,6 @@
 const { expect } = require('chai');
 const { ethers } = require('hardhat');
 
-//тест контроля версий :)
-
 describe ('MultiSigWallet', function () {
   let owner, addr1, addr2, addr3, addr4, multisigwallet;
   const vote = 2;
@@ -13,7 +11,7 @@ describe ('MultiSigWallet', function () {
     await multisigwallet.deployed();
   })
 
-  describe('Should be deployed/should have 0 ether by default', () => {
+  describe('Get network, should be deployed/should have 0 ether by default', () => {
     it("Get network", async function() {
       console.log(await ethers.provider.getNetwork());
     })
@@ -25,6 +23,34 @@ describe ('MultiSigWallet', function () {
       const balance = await ethers.provider.getBalance(multisigwallet.address);
       expect(balance).to.equal(0);
       console.log('Contract balance: ', ethers.utils.formatEther(balance));
+    })
+  })
+
+  describe ('Checking the correctness of processing require in the constructor', function () {
+    it("owners required", async function () {
+      const fakeMultiSigWallet = await ethers.getContractFactory("MultiSigWallet", owner);
+      await expect(fakeMultiSigWallet.connect(owner).deploy([],vote))
+      .to.be.revertedWith('owners required');
+    })
+    it("invalid number of required confirmations (vote=0)", async function () {
+      const fakeMultiSigWallet = await ethers.getContractFactory("MultiSigWallet", owner);
+      await expect(fakeMultiSigWallet.connect(owner).deploy([addr1.address,addr2.address,addr3.address],0))
+      .to.be.revertedWith('invalid number of required confirmations');
+    })
+    it("invalid number of required confirmations (vote > number of owners)", async function () {
+      const fakeMultiSigWallet = await ethers.getContractFactory("MultiSigWallet", owner);
+      await expect(fakeMultiSigWallet.connect(owner).deploy([addr1.address,addr2.address,addr3.address],4))
+      .to.be.revertedWith('invalid number of required confirmations');
+    })
+    it("invalid owner(address(0))", async function () {
+      const fakeMultiSigWallet = await ethers.getContractFactory("MultiSigWallet", owner);
+      await expect(fakeMultiSigWallet.connect(owner).deploy([addr1.address,ethers.constants.AddressZero,addr3.address],vote))
+      .to.be.revertedWith('invalid owner');
+    })
+    it("owner not unique", async function () {
+      const fakeMultiSigWallet = await ethers.getContractFactory("MultiSigWallet", owner);
+      await expect(fakeMultiSigWallet.connect(owner).deploy([addr1.address,addr3.address,addr3.address],vote))
+      .to.be.revertedWith('owner not unique');
     })
   })
 
@@ -87,7 +113,7 @@ describe ('MultiSigWallet', function () {
       to: multisigwallet.address,
       value: amount
       });
-    
+
     const bal = await ethers.provider.getBalance(multisigwallet.address);
     expect (bal)
       .to.equal(_bal.add(amount));
@@ -98,10 +124,10 @@ describe ('MultiSigWallet', function () {
       .to.emit(multisigwallet, 'Deposit')
       .withArgs(user.address, amount, ethers.BigNumber.from(await ethers.provider.getBalance(multisigwallet.address)));
   }
-  
+
   describe('Replenish the balance of the contract from user', () => {
     const amount = ethers.utils.parseEther("0.25");
-    it("Replenish the balance of the contract from deployer without the right to vote", async function(){      
+    it("Replenish the balance of the contract from deployer without the right to vote", async function(){
       await receive(owner, amount);
     })
     it("Replenish the balance of the contract from user1 with the right to vote", async function(){
@@ -166,7 +192,7 @@ describe ('MultiSigWallet', function () {
     const _v = await multisigwallet.transactions(_txIndex);
     const _w = await multisigwallet.isConfirmed(_txIndex,user.address);
     const tx = await multisigwallet.connect(user).confirmTransaction(_txIndex);
-    const v = await multisigwallet.transactions(_txIndex)
+    const v = await multisigwallet.transactions(_txIndex);
     expect(v.numConfirmations)
       .to.equal(_v.numConfirmations.add(1));
     expect(await multisigwallet.isConfirmed(_txIndex,user.address))
@@ -265,6 +291,12 @@ describe ('MultiSigWallet', function () {
         await revokeconfirmation(addr3, _txIndex);
       })
     })
+    describe('Checking the require branch when revoking Confirmation', () => {
+      it("The abolition of of the third transaction by the third owner", async function () {
+        await expect(multisigwallet.connect(addr3).revokeConfirmation(2))
+          .to.be.revertedWith('tx not confirmed');
+      })      
+    })    
   })
 
   async function executetransaction(user, _txIndex) {
@@ -353,4 +385,3 @@ describe ('MultiSigWallet', function () {
   })
 
 })
-
