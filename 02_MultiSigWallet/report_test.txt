@@ -12,7 +12,7 @@ Instrumenting for coverage...
 Compilation:
 ============
 
-Nothing to compile
+Compiled 2 Solidity files successfully
 
 Network Info
 ============
@@ -30,66 +30,65 @@ Contract address : 0x5FbDB2315678afecb367f032d93F642f64180aa3
 Contract balance:  0.0
       ✔ Should have 0 ether by default
     Checking the correctness of processing require in the constructor
-      ✔ owners required (88ms)
-      ✔ invalid number of required confirmations (vote=0) (40ms)
-      ✔ invalid number of required confirmations (vote > number of owners) (44ms)
-      ✔ invalid owner(address(0)) (61ms)
-      ✔ owner not unique (74ms)
+      ✔ owners required (102ms)
+      ✔ invalid number of required confirmations (vote=0) (44ms)
+      ✔ invalid number of required confirmations (vote > number of owners) (48ms)
+      ✔ invalid owner(address(0)) (62ms)
+      ✔ owner not unique (80ms)
     Checking the correctness of constructor execution
-      ✔ Checking whether users are included in the array owners (57ms)
-      ✔ Checking whether users are included in the mapping isOwner (73ms)
+      ✔ Checking whether users are included in the array owners (60ms)
+      ✔ Checking whether users are included in the mapping isOwner (82ms)
       ✔ List owners
       ✔ Check the number of votes
     Replenish the balance of the contract from user
-      ✔ Replenish the balance of the contract from deployer without the right to vote (70ms)
-      ✔ Replenish the balance of the contract from user1 with the right to vote (65ms)
-      ✔ Replenish the balance of the contract from user2 with the right to vote (54ms)
-      ✔ Replenish the balance of the contract from user3 with the right to vote (53ms)
-      ✔ Replenish the balance of the contract from user4 without the right to vote (52ms)
+      ✔ Replenish the balance of the contract from deployer without the right to vote (66ms)
+      ✔ Replenish the balance of the contract from user1 with the right to vote (71ms)
+      ✔ Replenish the balance of the contract from user2 with the right to vote (59ms)
+      ✔ Replenish the balance of the contract from user3 with the right to vote (58ms)
+      ✔ Replenish the balance of the contract from user4 without the right to vote (53ms)
     Creating voting transactions
-      ✔ Creation of the transaction not owner (60ms)
-      ✔ Creation of the first transaction for voting by the owner (81ms)
-      ✔ Creation of the second transaction for voting by the owner (85ms)
-      ✔ Creation of the third transaction for voting by the owner (86ms)
+      ✔ Creation of the transaction not owner (74ms)
+      ✔ Creation of the first transaction for voting by the owner (90ms)
+      ✔ Creation of the second transaction for voting by the owner (90ms)
+      ✔ Creation of the third transaction for voting by the owner (99ms)
     Transaction confirmation
       Confirmation of the first transaction by the owner
-        ✔ Confirmation by the first owner (111ms)
-        ✔ Confirmation by the second owner (102ms)
-        ✔ Confirmation by the third owner (321ms)
+        ✔ Confirmation by the first owner (122ms)
+        ✔ Confirmation by the second owner (108ms)
+        ✔ Confirmation by the third owner (114ms)
       Confirmation of the second transaction by the owner
-        ✔ Confirmation by the first owner (169ms)
-        ✔ Confirmation by the second owner (130ms)
-        ✔ Confirmation by the third owner (143ms)
+        ✔ Confirmation by the first owner (110ms)
+        ✔ Confirmation by the second owner (107ms)
+        ✔ Confirmation by the third owner (108ms)
       Confirmation of the third transaction by the owner
-        ✔ Confirmation by the first owner (305ms)
-        ✔ Confirmation by the second owner (228ms)
-        ✔ Confirmation by the third owner (132ms)
+        ✔ Confirmation by the first owner (111ms)
+        ✔ Confirmation by the second owner (111ms)
+        ✔ Confirmation by the third owner (95ms)
     The abolition of transaction confirmation
       The abolition of the first transaction by the owner
-        ✔ The abolition of the first transaction by the first owner (281ms)
+        ✔ The abolition of the first transaction by the first owner (98ms)
       The abolition of the second transaction by the owner
-        ✔ The abolition of the second transaction by the third owner (107ms)
+        ✔ The abolition of the second transaction by the third owner (88ms)
       The abolition of the third transaction by the owner
-        ✔ The abolition of of the third transaction by the first owner (117ms)
-        ✔ The abolition of of the third transaction by the third owner (121ms)
-      Checking the require branch when revoking Confirmation
-        ✔ The abolition of of the third transaction by the third owner (42ms)
+        ✔ The abolition of of the third transaction by the first owner (83ms)
+        ✔ The abolition of of the third transaction by the third owner (100ms)
+        ✔ The abolition of of the third transaction by the third owner again
     Perform a confirmed transaction
-      ✔ Perform the first transaction (170ms)
-      ✔ Perform the second transaction (133ms)
-      ✔ transaction with insufficient votes/third transaction (50ms)
+      ✔ Perform the first transaction (105ms)
+      ✔ Perform the second transaction (89ms)
+      ✔ transaction with insufficient votes/third transaction (46ms)
     Checking the work of modifiers
       ✔ modifiers *onlyOwner* not owner
       ✔ modifier txExists/tx does not exist
-      ✔ modifier notExecuted/tx already executed (94ms)
-      ✔ modifier notConfirmed/tx already confirmed (40ms)
+      ✔ modifier notExecuted/tx already executed
+      ✔ modifier notConfirmed/tx already confirmed (41ms)
     Secondary functions
       ✔ Function getOwners
       ✔ Function getTransactionCount
-      ✔ Function getTransaction (47ms)
+      ✔ Function getTransaction
 
 
-  45 passing (5s)
+  45 passing (4s)
 
 ----------------------|----------|----------|----------|----------|----------------|
 File                  |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |

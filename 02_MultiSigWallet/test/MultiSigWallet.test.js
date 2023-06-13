@@ -290,13 +290,11 @@ describe ('MultiSigWallet', function () {
       it("The abolition of of the third transaction by the third owner", async function () {
         await revokeconfirmation(addr3, _txIndex);
       })
-    })
-    describe('Checking the require branch when revoking Confirmation', () => {
-      it("The abolition of of the third transaction by the third owner", async function () {
-        await expect(multisigwallet.connect(addr3).revokeConfirmation(2))
+      it("The abolition of of the third transaction by the third owner again", async function () {
+        await expect(multisigwallet.connect(addr3).revokeConfirmation(_txIndex))
           .to.be.revertedWith('tx not confirmed');
-      })      
-    })    
+      })
+    })
   })
 
   async function executetransaction(user, _txIndex) {
